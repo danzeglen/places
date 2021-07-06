@@ -5,7 +5,7 @@ import { db } from '../fireconfig'
 import { UserContext } from '../providers/fire'
 
 const LoginModal = ({ navigation, loginModalVisable, setLoginModalVisable }) => {
-    const { createAccount, user, logout, signIn } = useContext(UserContext)
+    const { createAccount, user, logout, signIn, createError } = useContext(UserContext)
     const [email, setEmail] = useState('');
     const [displayName, setDisplayName] = useState('');
     const [password, setPassword] = useState('');
@@ -46,7 +46,8 @@ const LoginModal = ({ navigation, loginModalVisable, setLoginModalVisable }) => 
                                     value={displayName}
                                     onChangeText={setDisplayName}
                                     placeholder='password...'></TextInput>
-                                <TouchableOpacity onPress={() => createAccount(email, password)} style={{backgroundColor: '#0244ad', width: '90%', height: 50, justifyContent: 'center', alignItems: 'center', marginTop: 5, borderRadius: 10 }}>
+                                <Text>{createError}</Text>
+                                <TouchableOpacity onPress={() => createAccount(email, password, displayName)} style={{backgroundColor: '#0244ad', width: '90%', height: 50, justifyContent: 'center', alignItems: 'center', marginTop: 5, borderRadius: 10 }}>
                                     <Text style={{color:'white',fontSize:20}}>Sign up</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={setLoginModalVisable}  style={{backgroundColor: 'white',borderWidth:0.5, width: '90%', height: 50, justifyContent: 'center', alignItems: 'center', marginTop: 5, borderRadius: 10 }}>

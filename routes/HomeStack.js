@@ -16,11 +16,13 @@ import Header from '../components/Header';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NotificationScreen from '../screens/NotificationScreen'
 import { UserContext } from '../providers/fire'
+import LoginDetailScreen from '../screens/LoginDetailScreen'
 
 const Tab = createBottomTabNavigator();
 const TopTab = createMaterialTopTabNavigator();
 
 const HomeStack = createStackNavigator();
+const AccountStack = createStackNavigator();
 
 const toptabBarOptions = {
   style: { backgroundColor: '#fff', paddingTop: 0, marginTop: 0 },
@@ -58,6 +60,15 @@ function HomeStackScreen() {
       <HomeStack.Screen options={{ headerShown: false }} name="Trending" component={MyTabs} />
       <HomeStack.Screen name="Details" component={PostDetails} />
     </HomeStack.Navigator>
+  );
+}
+
+function AccountStackScreen() {
+  return (
+    <AccountStack.Navigator>
+      <AccountStack.Screen options={{ headerShown: false }} name="Account" component={AccountScreen} />
+      <AccountStack.Screen name="Details" component={LoginDetailScreen} />
+    </AccountStack.Navigator>
   );
 }
 
@@ -128,7 +139,7 @@ function Navigator() {
         <Tab.Screen name="New" component={SavedPlacesScreen} />
         <Tab.Screen name="Content" component={PostScreen} />
         <Tab.Screen name="Trending" component={NotificationScreen} />
-        <Tab.Screen name="Account" component={AccountScreen} />
+        <Tab.Screen name="Account" component={AccountStackScreen} />
       </Tab.Navigator>
     </NavigationContainer >
   );

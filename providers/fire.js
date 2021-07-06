@@ -5,6 +5,8 @@ const UserContext = createContext()
 const FireProvider = ({ children }) => {
     const [user, setUser] = useState();
     const [currentAddress, setCurrentAddress] = useState('Cambridge, ON, CA');
+    const [createError, setCreateError] = useState('')
+    const [profileDone, setProfileDone] = useState(false);
 
     const signIn = (email,password) => {
     
@@ -26,20 +28,24 @@ const FireProvider = ({ children }) => {
 
     const createAccount = (email, password, displayName) => {
         console.log('RAN')
+        console.log(displayName)
+        console.log('^^&&&^^^&&^^')
         fire.auth().createUserWithEmailAndPassword(email, password).then((res) => {
             console.log(res)
             db.collection('users').doc(res.uid).set({
                 email: email
             })
-            res.updateProfile({
-                displayName: displayName
+            res.user.updateProfile({
+                displayName: displayName,
+                email: email
             }).then((response) => {
-                console.log('profile updateed')
+                console.log(response)
+                setProfileDone(true);
             }).catch((error) => {
                 console.log('error profile updating')
             })
         }).catch((err) => {
-            console.log('error')
+            setCreateError(err.message)
         })
     }
 
@@ -58,7 +64,7 @@ const FireProvider = ({ children }) => {
         })
 
         return () => { unmounted = true };
-    }, [])
+    }, [profileDone])
 
     return (
 
@@ -68,7 +74,8 @@ const FireProvider = ({ children }) => {
             logout,
             user,
             currentAddress,
-            setCurrentAddress
+            setCurrentAddress,
+            createError
         }}>
             {children}
         </UserContext.Provider>
