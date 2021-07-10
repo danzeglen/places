@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center',
         width: '100%',
-        marginTop: 22,
     },
     centeredView2: {
         flex: 1,

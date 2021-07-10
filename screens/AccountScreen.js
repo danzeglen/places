@@ -5,6 +5,7 @@ import CreateModal from '../components/CreateModal'
 import explore from './explore.png'
 import { UserContext } from '../providers/fire'
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 import wooly from './wooly.png'
 import wooly2 from './wooly2.png'
 
@@ -18,7 +19,7 @@ const ContentScreen = ({ navigation }) => {
         return (
             <View style={{ flex: 1, justifyContent: 'space-around', alignItems: "center" }}>
 
-                <SafeAreaView>
+                <SafeAreaView style={{flex:1}}>
                     <Text style={{ fontWeight: 'bold', fontSize: 25 }}>Hello, {user.displayName}</Text>
                     <View style={{ height: 300, width: 300, justifyContent: 'center', alignItems: 'center' }}>
                         <Image source={wooly} style={{ height: 300, width: 300 }} />
@@ -26,11 +27,11 @@ const ContentScreen = ({ navigation }) => {
                 </SafeAreaView>
                 <View style={{ paddingTop: 15, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius:20,borderTopRightRadius:20 }}>
                     <Text>default city</Text>
-                    <Text style={{fontSize:25, paddingBottom:20}}>Cambridge, ON, CA</Text>
+                    <Text style={{fontSize:20,paddingBottom:20,color:'dodgerblue'}}>Cambridge, ON, CA</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Details')}>
-                        <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9' }}>
+                        <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9',borderTopRightRadius:10,borderTopLeftRadius:10 }}>
                             <View style={{ marginLeft: 10, padding: 2, borderWidth: 0.7, borderColor: '#c9c9c9' }}>
-                                <AntDesign name='star' size={32} />
+                                <AntDesign name='mobile1' size={28} />
                             </View>
                             <View style={{ flex: 1, paddingLeft: 10 }}>
                                 <Text style={{ fontWeight: 'bold' }}>Login details</Text>
@@ -41,42 +42,14 @@ const ContentScreen = ({ navigation }) => {
                             </View>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
                         <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9' }}>
                             <View style={{ marginLeft: 10, padding: 2, borderWidth: 0.7, borderColor: '#c9c9c9' }}>
-                                <AntDesign name='star' size={32} />
+                            <Entypo name='bell' size={28} />
                             </View>
                             <View style={{ flex: 1, paddingLeft: 10 }}>
-                                <Text style={{ fontWeight: 'bold' }}>Reach out to developers</Text>
-                                <Text style={{ opacity: 0.6, }}>Report bugs, reccomend features...</Text>
-                            </View>
-                            <View>
-                                <AntDesign name='right' size={22} />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9' }}>
-                            <View style={{ marginLeft: 10, padding: 2, borderWidth: 0.7, borderColor: '#c9c9c9' }}>
-                                <AntDesign name='star' size={32} />
-                            </View>
-                            <View style={{ flex: 1, paddingLeft: 10 }}>
-                                <Text style={{ fontWeight: 'bold' }}>Set default cities</Text>
-                                <Text style={{ opacity: 0.6, }}>Username, password, ect</Text>
-                            </View>
-                            <View>
-                                <AntDesign name='right' size={22} />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9' }}>
-                            <View style={{ marginLeft: 10, padding: 2, borderWidth: 0.7, borderColor: '#c9c9c9' }}>
-                                <AntDesign name='star' size={32} />
-                            </View>
-                            <View style={{ flex: 1, paddingLeft: 10 }}>
-                                <Text style={{ fontWeight: 'bold' }}>Login details</Text>
-                                <Text style={{ opacity: 0.6, }}>Username, password, ect</Text>
+                                <Text style={{ fontWeight: 'bold' }}>Notifications</Text>
+                                <Text style={{ opacity: 0.6, }}>Manage notificatiobs</Text>
                             </View>
                             <View>
                                 <AntDesign name='right' size={22} />
@@ -84,7 +57,21 @@ const ContentScreen = ({ navigation }) => {
                         </View>
                     </TouchableOpacity>
 
-                    <View style={{paddingTop:20,paddingBottom:40, width: '100%', justifyContent: 'center', alignItems: 'center', }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Contact')}>
+                        <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9',borderBottomLeftRadius:10,borderBottomRightRadius:10  }}>
+                            <View style={{ marginLeft: 10, padding: 2, borderWidth: 0.7, borderColor: '#c9c9c9' }}>
+                                <AntDesign name='mail' size={28} />
+                            </View>
+                            <View style={{ flex: 1, paddingLeft: 10 }}>
+                                <Text style={{ fontWeight: 'bold' }}>Contact Us</Text>
+                                <Text style={{ opacity: 0.6, }}>Report bugs, reccomend features...</Text>
+                            </View>
+                            <View>
+                                <AntDesign name='right' size={22} />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    <View style={{paddingTop:10,paddingBottom:50, width: '100%', justifyContent: 'center', alignItems: 'center', }}>
                         <TouchableOpacity onPress={logout} style={{ width: '85%', height: 50, borderRadius: 10, backgroundColor: 'white' }}>
                             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, backgroundColor: '#0244ad', borderRadius: 10 }}>
                                 <Text style={{ color: 'white', fontSize: 20 }}>Logout</Text>
@@ -101,7 +88,7 @@ const ContentScreen = ({ navigation }) => {
 
         return (
             <View style={styles.main}>
-                <SafeAreaView style={{ flex: 0.6, width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+                <SafeAreaView style={{ flex: 0.7, width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Text style={{ fontSize: 30, paddingTop: 15 }}>Places</Text>
                     <Text style={{ paddingTop: 10, paddingBottom: 40, fontWeight: 'bold' }}>Share your favorite places with the world!</Text>
 
@@ -111,7 +98,7 @@ const ContentScreen = ({ navigation }) => {
                     </View>
 
                 </SafeAreaView>
-                <View style={{ flex: 0.4, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ flex: 0.3, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                     <LoginModal loginModalVisable={loginModalVisable} setLoginModalVisable={setLoginModalVisable} />
                     <CreateModal createModalVisable={createModalVisable} setCreateModalVisable={setCreateModalVisable} />
                 </View>

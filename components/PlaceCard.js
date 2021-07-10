@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { TouchableOpacity, Text, Image, StyleSheet, View, Share } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -7,12 +7,30 @@ import CachedImage from '../components/CachedImage'
 import DisplayTypes from './DisplayTypes';
 import { SwipeRow } from 'react-native-swipe-list-view';
 import RateModal from './RateModal';
+import { UserContext } from '../providers/fire'
+import { db } from '../fireconfig'
+import firebase from 'firebase'
 
 
 const PlaceCard = ({ item, onPress, style, onNavigate }) => {
+    const { user, userDetails, setUserDetails } = useContext(UserContext)
     const [rateVisable, setRateVisable] = useState(false)
     const [ratingSent, setRatingSent] = useState(false)
+    let favs
+    if (userDetails) {
+        favs = userDetails.favorites
+    }
     let displayImages
+    console.log(favs)
+    
+    const handleSave = async () => {
+        await db.collection('users').doc(user.uid).update({
+            favorites: firebase.firestore.FieldValue.arrayUnion(item.docID)
+        })
+
+        setUserDetails({favorites: [...favs, item.docID]})
+    }
+    console.log(userDetails)
 
     const onShare = async () => {
         let title = item.title
@@ -125,9 +143,9 @@ const PlaceCard = ({ item, onPress, style, onNavigate }) => {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 15 }}>
                     <View style={{ flexDirection: 'row', width: 100 }}>
 
-                        <TouchableOpacity style={{flexDirection:'row',alignItems:'center'}} onPress={() => setRateVisable(true)}>
+                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setRateVisable(true)}>
                             <Text>{item.rating}</Text>
-                            
+
                             <AntDesign name='staro' size={25} color='grey' />
                         </TouchableOpacity>
                     </View>
@@ -139,7 +157,9 @@ const PlaceCard = ({ item, onPress, style, onNavigate }) => {
                         </TouchableOpacity>
                     </View>
                     <View style={{ flexDirection: 'row', width: 100, justifyContent: 'flex-end' }}>
-                        <AntDesign name='pushpino' size={25} color='grey' style={{ paddingRight: 10 }} />
+                        <TouchableOpacity onPress={handleSave}>
+                            <AntDesign name='pushpino' size={25} color='grey' style={{ paddingRight: 10 }} />
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={onShare}>
                             <AntDesign name='upload' size={25} color='grey' />
                         </TouchableOpacity>

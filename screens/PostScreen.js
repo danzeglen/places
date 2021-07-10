@@ -11,6 +11,7 @@ import TypeModal from '../components/TypeModal';
 import { ScrollView } from 'react-native-gesture-handler';
 import LoadingModal from '../components/LoadingModal';
 import SuccessModal from '../components/SuccessModal';
+import wooly3 from './wooly3.png'
 
 const PostScreen = ({ navigation }) => {
     const [image, setImage] = useState([]);
@@ -238,10 +239,16 @@ const PostScreen = ({ navigation }) => {
         );
     } else {
 
-        return(
-            <View style={{justifyContent:'center', flex:1, alignItems:'center'}}> 
-                <Text>Uh oh, you tried to post a place but are not logged in!</Text>
-                <Button title='login' onPress={() => navigation.navigate('Account')}/>
+        return (
+            <View style={{flex:1}}> 
+                <View style={{ justifyContent: 'flex-end', flex: 0.7, alignItems: 'center', paddingRight: 130 }}>
+                    <Image source={wooly3} style={{ height: 350, width: 500 }} />
+
+                </View>
+                <View style={{justifyContent:'center',alignItems: 'center',paddingTop:20}}>
+                    <Text style={{fontWeight:'bold',fontSize:20, }}>Uh oh, you tried to post a place but are not logged in!</Text>
+                    <Button title='Join' onPress={() => navigation.navigate('Account')} />
+                </View>
             </View>
         )
     }

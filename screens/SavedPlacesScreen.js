@@ -1,41 +1,173 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, Image } from 'react-native'
-import CachedImage from '../components/CachedImage';
+import React, { useContext, useState, useEffect } from 'react';
+import {
+    FlatList, Image, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, RefreshControl, View, Animated
+} from 'react-native';
 import { UserContext } from '../providers/fire'
+import { db } from '../fireconfig'
+import PlaceCard from '../components/PlaceCard';
+import firebase from 'firebase'
+import Wooly4 from './Wooly4.png'
+import PlaceSavedCard from '../components/PlaceSavedCard'
 
-const SavedPlacesScreen = (props) => {
-    const { createAccount, user, logout } = useContext(UserContext)
-    let str = 'https://firebasestorage.googleapis.com/v0/b/spots-2385a.appspot.com/o/knLTWAQyj0crULeO5CHTpb9B4sC2%2FSun%20Jul%2004%202021%2015%3A05%3A00%20GMT-0400%20(EDT)%2Fimage1?alt=media&token=002a5ae0-155f-4394-8cb9-4f59387976a2';
-    let inx = str.indexOf('image')
-    let spl = str.slice( 0, inx+6)
-    let spl2 = str.slice(inx+6, str.length)
-    console.log(str)
-    console.log(inx)
-    console.log(spl)
-    console.log(spl2)
 
-    return (
-        <View style={styles.main}>
-            <Text>Saved Screen</Text>
+function TrendingScreen({ navigation }) {
+
+    const { currentAddress, user, userDetails, setUserDetails } = useContext(UserContext)
+    const [selectedId, setSelectedId] = useState(null);
+    const [postData, setPostData] = useState(null);
+    const [refreshing, setRefreshing] = useState(false)
+    const [lastDoc, setLastDoc] = useState(null);
+
+
+    const renderItem = ({ item, index }) => {
+
+        const backgroundColor = item.docID === selectedId ? 'white' : 'white';
+        return (
             
-        </View>
-    );
+                <PlaceSavedCard setPostData={setPostData} postData={postData} item={item} onPress={() => setSelectedId(item.docID)} onNavigate={() => navigation.navigate('Details', { item: item })} style={{ backgroundColor }} />
+                            );
+    };
+
+
+    const _onRefresh = async () => {
+        console.log('_onRefresh')
+        setRefreshing(true);
+        await setData()
+        setRefreshing(false);
+    };
+
+    async function fetchData() {
+        let data = []
+        console.log(userDetails.favorites)
+        const dataRef = db.collection('places')
+            .where(firebase.firestore.FieldPath.documentId(), 'in', userDetails.favorites)
+            .limit(3);
+        const snapshot = await dataRef.get()
+
+        if (snapshot.empty) {
+            console.log('NADA');
+            return;
+        }
+        snapshot.forEach(doc => {
+            setLastDoc(doc)
+            let tempDoc = doc.data()
+            tempDoc['docID'] = doc.id
+            data.push(tempDoc)
+        })
+        return data
+    }
+  
+
+    async function setData() {
+        const data = await fetchData()
+        setPostData(data)
+
+    }
+
+
+    async function handlePaginate() {
+        let data = [];
+        const last = postData[postData.length - 1];
+        const next = db.collection('places')
+            .where(firebase.firestore.FieldPath.documentId(), 'in', userDetails.favorites)
+            .startAfter(lastDoc)
+            .limit(1);
+
+        const getData = await next.get();
+        if (getData.empty) {
+            console.log('NADAWADA');
+            return;
+        }
+        getData.forEach(doc => {
+            setLastDoc(doc)
+            let tempDoc = doc.data()
+            tempDoc['docID'] = doc.id
+            data.push(tempDoc)
+        })
+
+        return data
+    }
+    if (postData) {
+        console.log(postData.length)
+    }
+
+
+
+    const handlePadinateState = async () => {
+        console.log('ran')
+        const data = await handlePaginate()
+
+        if (data) {
+            setPostData(prev => [...prev, ...data])
+        }
+
+    }
+
+    useEffect(() => {
+        if (userDetails) {
+            setData()
+        }
+
+    }, [userDetails])
+
+    if (user) {
+        return (
+            <View style={styles.container}>
+                <SafeAreaView style={{ alignItems: 'center' }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Saved Places</Text>
+                </SafeAreaView>
+                {postData ?
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing}
+                                onRefresh={_onRefresh} tintColor="#F8852D" />
+                        }
+                        data={postData}
+                        renderItem={renderItem}
+                        enableEmptySections={true}
+
+                        keyExtractor={(item, index) => { return index.toString(); }}
+                        extraData={selectedId}
+                        onEndReachedThreshold={0.5}
+                        onEndReached={handlePadinateState}
+                    />
+                    : <Text>No data</Text>
+                }
+            </View>
+        );
+    } else {
+        return (
+            <View style={styles.main}>
+                <SafeAreaView style={{ alignItems: 'center' }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Saved Places</Text>
+                </SafeAreaView>
+                <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+                    <Text style={{ marginBottom: 40, fontWeight: 'bold', fontSize: 20 }}>You must be logged in to save places!</Text>
+                    <Image source={Wooly4} style={{ height: 450, width: 370 }} />
+                </View>
+            </View>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
-    main: {
-        justifyContent: 'center',
-        alignItems: 'center',
+    container: {
         flex: 1,
-        backgroundColor: 'white'
+        marginTop: StatusBar.currentHeight || 0,
+        backgroundColor: '#f0f0f0',
     },
-    input: {
-        width: 200,
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
+    item: {
+        padding: 20,
+        marginVertical: 8,
+        marginHorizontal: 16,
     },
-
-})
-
-export default SavedPlacesScreen;
+    title: {
+        fontSize: 32,
+    },
+    main: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+    }
+});
+export default TrendingScreen;

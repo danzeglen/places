@@ -17,11 +17,15 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import NotificationScreen from '../screens/NotificationScreen'
 import { UserContext } from '../providers/fire'
 import LoginDetailScreen from '../screens/LoginDetailScreen'
+import NotifcationSettingScreen from '../screens/NotificationSettingsScreen'
+import ManageCitiesScreen from '../screens/ManageCitiesScreen'
+import ContactUsScreen from '../screens/ContactUsScreen'
 
 const Tab = createBottomTabNavigator();
 const TopTab = createMaterialTopTabNavigator();
 
 const HomeStack = createStackNavigator();
+const SavedStack = createStackNavigator();
 const AccountStack = createStackNavigator();
 
 const toptabBarOptions = {
@@ -62,12 +66,23 @@ function HomeStackScreen() {
     </HomeStack.Navigator>
   );
 }
+function SavedStackScreen() {
+  return (
+    <SavedStack.Navigator>
+      <SavedStack.Screen options={{ headerShown: false }} name="Trending" component={SavedPlacesScreen} />
+      <SavedStack.Screen name="Details" component={PostDetails} />
+    </SavedStack.Navigator>
+  );
+}
 
 function AccountStackScreen() {
   return (
     <AccountStack.Navigator>
       <AccountStack.Screen options={{ headerShown: false }} name="Account" component={AccountScreen} />
       <AccountStack.Screen name="Details" component={LoginDetailScreen} />
+      <AccountStack.Screen name="Notifications" component={NotifcationSettingScreen} />
+      <AccountStack.Screen name="Cities" component={ManageCitiesScreen} />
+      <AccountStack.Screen name="Contact" component={ContactUsScreen} />
     </AccountStack.Navigator>
   );
 }
@@ -136,7 +151,7 @@ function Navigator() {
         }}>
 
         <Tab.Screen name="All" component={HomeStackScreen} />
-        <Tab.Screen name="New" component={SavedPlacesScreen} />
+        <Tab.Screen name="New" component={SavedStackScreen} />
         <Tab.Screen name="Content" component={PostScreen} />
         <Tab.Screen name="Trending" component={NotificationScreen} />
         <Tab.Screen name="Account" component={AccountStackScreen} />

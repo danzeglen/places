@@ -4,6 +4,7 @@ const UserContext = createContext()
 
 const FireProvider = ({ children }) => {
     const [user, setUser] = useState();
+    const [userDetails, setUserDetails] = useState();
     const [currentAddress, setCurrentAddress] = useState('Cambridge, ON, CA');
     const [createError, setCreateError] = useState('')
     const [profileDone, setProfileDone] = useState(false);
@@ -32,7 +33,7 @@ const FireProvider = ({ children }) => {
         console.log('^^&&&^^^&&^^')
         fire.auth().createUserWithEmailAndPassword(email, password).then((res) => {
             console.log(res)
-            db.collection('users').doc(res.uid).set({
+            db.collection('users').doc(res.user.uid).set({
                 email: email
             })
             res.user.updateProfile({
@@ -49,12 +50,22 @@ const FireProvider = ({ children }) => {
         })
     }
 
+    const getAccountDetails = async (usercred) => {
+        let details = await db.collection('users').doc(usercred.uid).get()
+
+        if(!details.empty){
+            setUserDetails(details.data())
+        }
+    }
+
     useEffect(() => {
         let unmounted = false;
         fire.auth().onAuthStateChanged(async (usercred) => {
             if (usercred) {
                 if (!unmounted) {
                     setUser(usercred)
+                    getAccountDetails(usercred)
+
                 }
             } else {
                 if (!unmounted) {
@@ -75,7 +86,9 @@ const FireProvider = ({ children }) => {
             user,
             currentAddress,
             setCurrentAddress,
-            createError
+            createError,
+            userDetails,
+            setUserDetails
         }}>
             {children}
         </UserContext.Provider>

@@ -63,7 +63,7 @@ const LoginModal = ({ navigation, loginModalVisable, setLoginModalVisable }) => 
                     </View>
                 </View>
             </Modal>
-            <TouchableOpacity onPress={() => setLoginModalVisable(true)} style={{ backgroundColor: '#0244ad', width: '70%', height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 10 }}>
+            <TouchableOpacity  onPress={() => setLoginModalVisable(true)} style={{ backgroundColor: '#0244ad', width: '70%', height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 10 }}>
                 <Text style={{ color: 'white' }}>Sign up</Text>
             </TouchableOpacity>
 
