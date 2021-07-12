@@ -1,23 +1,24 @@
 import React, { useContext, useState, useEffect } from 'react';
 import {
-    FlatList, Image, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, RefreshControl,View
+    FlatList, Image, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, RefreshControl, View
 } from 'react-native';
 import { UserContext } from '../providers/fire'
 import { db } from '../fireconfig'
 import PlaceCard from '../components/PlaceCard';
+import firebase from 'firebase'
 
-function TrendingScreen({navigation}) {
+function TrendingScreen({ navigation }) {
 
-    const {currentAddress} = useContext(UserContext)
+    const { currentAddress } = useContext(UserContext)
     const [selectedId, setSelectedId] = useState(null);
     const [postData, setPostData] = useState(null);
     const [refreshing, setRefreshing] = useState(false)
     const [lastDoc, setLastDoc] = useState(null);
-
+    let lastweek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
 
     const renderItem = ({ item, index }) => {
         const backgroundColor = item.docID === selectedId ? 'white' : 'white';
-        return (<PlaceCard item={item} onPress={() => setSelectedId(item.docID)} onNavigate={() => navigation.navigate('Details',{item:item})} style={{ backgroundColor }} />);
+        return (<PlaceCard item={item} onPress={() => setSelectedId(item.docID)} onNavigate={() => navigation.navigate('Details', { item: item })} style={{ backgroundColor }} />);
     };
 
     const _onRefresh = async () => {
@@ -31,13 +32,15 @@ function TrendingScreen({navigation}) {
     async function fetchData() {
         let data = []
         const dataRef = db.collection('places')
-            .where('city', '==', currentAddress.split(',')[0])
-            .orderBy('likes', 'desc')
-            .limit(3);
-        const snapshot = await dataRef.get()
+        .where('city', '==', currentAddress.split(',')[0])
+        .where('date','>', lastweek)
+        .orderBy('date','desc')
+        dataRef.orderBy('rating', 'desc')
+
+        const query = dataRef.limit(2)
+        const snapshot = await query.get()
 
         if (snapshot.empty) {
-            console.log('NADA');
             return;
         }
         snapshot.forEach(doc => {
@@ -58,18 +61,21 @@ function TrendingScreen({navigation}) {
     async function handlePaginate() {
         let data = [];
         const last = postData[postData.length - 1];
+        console.log(lastDoc.id)
         const next = db.collection('places')
-            .where('city', '==', currentAddress.split(',')[0])
-            .orderBy('likes', 'desc')
-            .startAfter(lastDoc)
-            .limit(1);
+        .where('city', '==', currentAddress.split(',')[0])
+        .where('date', '>', lastweek)
+        .orderBy('date', 'desc')
+        next.orderBy('rating', 'desc')
+        
 
-        const getData = await next.get();
+        const query = next.startAfter(lastDoc).limit(1)
+        const getData = await query.get()
         if (getData.empty) {
-            console.log('NADAWADA');
             return;
         }
         getData.forEach(doc => {
+            console.log('RANRANRAN')
             setLastDoc(doc)
             let tempDoc = doc.data()
             tempDoc['docID'] = doc.id
@@ -78,13 +84,8 @@ function TrendingScreen({navigation}) {
 
         return data
     }
-    if(postData){
-        console.log(postData.length)
-    }
-
 
     const handlePadinateState = async () => {
-        console.log('ran')
         const data = await handlePaginate()
 
         if (data) {
@@ -94,11 +95,12 @@ function TrendingScreen({navigation}) {
     }
 
     useEffect(() => {
-        if(currentAddress){
+        if (currentAddress) {
             setData()
         }
-        
+
     }, [currentAddress])
+
 
     return (
         <View style={styles.container}>
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: StatusBar.currentHeight || 0,
-        backgroundColor:'#f0f0f0',
+        backgroundColor: '#f0f0f0',
     },
     item: {
         padding: 20,

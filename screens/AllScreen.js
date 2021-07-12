@@ -17,7 +17,7 @@ function AllScreen({navigation}) {
 
     const renderItem = ({ item, index }) => {
         const backgroundColor = item.docID === selectedId ? 'white' : 'white';
-        return (<PlaceCard item={item} onPress={() => setSelectedId(item.docID)} onNavigate={() => navigation.navigate('Details',{item:item})} style={{ backgroundColor }} />);
+        return (<PlaceCard index={index} item={item} onPress={() => setSelectedId(item.docID)} onNavigate={() => navigation.navigate('Details',{item:item})} style={{ backgroundColor }} />);
     };
 
     const _onRefresh = async () => {
@@ -32,9 +32,10 @@ function AllScreen({navigation}) {
         let data = []
         const dataRef = db.collection('places')
             .where('city', '==', currentAddress.split(',')[0])
-            .orderBy('likes', 'desc')
-            .limit(3);
-        const snapshot = await dataRef.get()
+        dataRef.orderBy('rating', 'desc')
+        
+        const query = dataRef.limit(3)
+        const snapshot = await query.get()
 
         if (snapshot.empty) {
             console.log('NADA');
@@ -60,11 +61,11 @@ function AllScreen({navigation}) {
         const last = postData[postData.length - 1];
         const next = db.collection('places')
             .where('city', '==', currentAddress.split(',')[0])
-            .orderBy('likes', 'desc')
-            .startAfter(lastDoc)
-            .limit(1);
+        next.orderBy('likes', 'desc')
 
-        const getData = await next.get();
+        const query = next.startAfter(lastDoc).limit(1);
+
+        const getData = await query.get();
         if (getData.empty) {
             console.log('NADAWADA');
             return;

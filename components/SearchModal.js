@@ -20,18 +20,21 @@ const SearchModal = ({ setCurrentAddress, currentAddress }) => {
           <View style={styles.modalView}>
             <View style={{ height: 20, backgroundColor: 'green', position: 'relative' }}>
             </View>
-            <Text style={styles.modalText}>Select a city!</Text>
+            <Text style={styles.modalText}>Search a city!</Text>
 
             <GoogleCities setSelectedAddr={setSelectedAddr} />
 
+            <View style={{flexDirection:'row'}}> 
+
             <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+              style={{ ...styles.openButton}}
               onPress={() => {
                 setModalVisible(!modalVisible);
               }}>
-              <Text style={styles.textStyle}>Hide Modalkkk</Text>
+              <Text style={styles.textStyle}>Go back</Text>
             </TouchableHighlight>
-            <Button title='save' onPress={() => setCurrentAddress(selectedAddr)}></Button>
+            <Button title='save' onPress={() => { setCurrentAddress(selectedAddr); setModalVisible(!modalVisible) }}></Button>
+            </View>
           </View>
         </View>
       </Modal>
@@ -72,14 +75,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   openButton: {
-    backgroundColor: 'dodgerblue',
     borderRadius: 20,
     padding: 10,
-    marginRight: 20,
     elevation: 2,
   },
   textStyle: {
-    color: 'white',
+    color: 'grey',
     fontWeight: 'bold',
     textAlign: 'center',
   },

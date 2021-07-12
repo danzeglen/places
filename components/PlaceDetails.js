@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useContext } from 'react';
 import { Share, ScrollView, Linking, TouchableOpacity, Text, Image, StyleSheet, View, TextInput, Button, Alert } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -6,50 +6,66 @@ import Carousel from 'react-native-snap-carousel';
 import CachedImage from '../components/CachedImage'
 import DisplayTypes from './DisplayTypes';
 import CommentModal from './CommentModal';
+import RateModal from './RateModal';
+import { UserContext } from '../providers/fire'
+
 
 const PlaceDetails = ({ item }) => {
     const [comment, setComment] = useState('');
+    const { user, userDetails, setUserDetails } = useContext(UserContext)
+    const [rateVisable, setRateVisable] = useState(false)
+    const [ratingSent, setRatingSent] = useState(false)
+    const [isReviewed, setIsReviewed] = useState(false)
     let carRef = useRef(null);
 
-    const onShare = async () => {
-        try {
-            const result = await Share.share({
-                message: 'React Native | A framework for building native apps using React',
-            });
-            if (result.action === Share.sharedAction) {
-                if (result.activityType) {
-                    // shared with activity type of result.activityType
-                } else {
-                    // shared
-                }
-            } else if (result.action === Share.dismissedAction) {
-                // dismissed
+    useEffect(() => {
+        if (userDetails) {
+            if (userDetails.placesrated.includes(item.docID)) {
+                setIsReviewed(true)
+            } else {
+                setIsReviewed(false)
             }
-        } catch (error) {
-            alert(error.message);
         }
-    };
+    }, [userDetails])
+
+
 
     const renderItem = ({ item, index }) => {
         return (
             <View style={{ margin: 0 }}>
-                <CachedImage
+                <Image
                     style={{ height: 300, width: '100%', borderRadius: 10 }}
                     source={{
                         uri: item,
 
                     }}
-                    cacheKey={`${item.docID}${index}`} />
+                />
             </View>
         );
+    }
+    const handleSave = async () => {
+        await db.collection('users').doc(user.uid).update({
+            favorites: firebase.firestore.FieldValue.arrayUnion(item.docID)
+        })
+
+        setUserDetails({ favorites: [...favs, item.docID] })
     }
 
     return (
         <View style={[styles.item]}>
+            <RateModal setRatingSent={setRatingSent} docID={item.docID} ratingnum={item.ratingnum} rating={item.rating} rateVisable={rateVisable} setRateVisable={setRateVisable} />
+
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={styles.title}>{item.title}</Text>
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setRateVisable(true)}>
+                    <Text>{Math.round(item.rating * 100) / 100}</Text>
+                    {isReviewed ?
+                        <AntDesign name='star' size={25} color='orange' />
+                        : <AntDesign name='staro' size={25} color='grey' />}
+                </TouchableOpacity>
             </View>
-            <Text style={styles.name}>Daniel Zeglen</Text>
+            <Text style={styles.name}>Daniel Zeglen - {new Date(item.date.seconds * 1000).toDateString()}</Text>
+
             <Text style={styles.desc}>{item.description}</Text>
             <View style={{ justifyContent: 'center', alignItems: "center" }}>
                 <Carousel
@@ -70,18 +86,6 @@ const PlaceDetails = ({ item }) => {
                 <DisplayTypes food={item.food} entertainment={item.entertainment} under15={item.under15} free={item.free} outdoors={item.outdoors} lake={item.lake} datespot={item.datesport} />
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 15 }}>
-                <View style={{ flexDirection: 'row', width: 100 }}>
-                    <Text>4</Text>
-                    <TouchableOpacity>
-
-                        <AntDesign name='smileo' size={25} color='grey' />
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-
-                        <AntDesign name='frowno' size={25} color='grey' style={{ paddingRight: 15, paddingLeft: 5 }} />
-                    </TouchableOpacity>
-                </View>
-
 
                 <View style={{ flexDirection: 'row' }}>
                     <Text style={{ color: 'grey', paddingLeft: 10 }}>{item.commentnum} comment(s)</Text>
@@ -89,9 +93,9 @@ const PlaceDetails = ({ item }) => {
                 <View style={{ flexDirection: 'row', width: 100, justifyContent: 'flex-end' }}>
                     <TouchableOpacity>
 
-                    <AntDesign name='pushpino' size={25} color='grey' style={{ paddingRight: 10 }} />
+                        <AntDesign name='pushpino' size={25} color='grey' style={{ paddingRight: 10 }} />
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity>
                         <AntDesign name='upload' size={25} color='grey' />
                     </TouchableOpacity>
@@ -113,6 +117,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 18,
+        flex: 1,
     },
     desc: {
         paddingBottom: 5,

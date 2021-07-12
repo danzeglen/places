@@ -31,10 +31,14 @@ function NewScreen({navigation}) {
     async function fetchData() {
         let data = []
         const dataRef = db.collection('places')
-            .where('city', '==', currentAddress.split(',')[0])
-            .orderBy('likes', 'desc')
-            .limit(3);
-        const snapshot = await dataRef.get()
+        .where('city', '==', currentAddress.split(',')[0])
+        .where('date','<', new Date())
+        .orderBy('date', 'desc')
+        
+
+        const query = dataRef.limit(3)
+
+        const snapshot = await query.get()
 
         if (snapshot.empty) {
             console.log('NADA');
@@ -59,12 +63,13 @@ function NewScreen({navigation}) {
         let data = [];
         const last = postData[postData.length - 1];
         const next = db.collection('places')
-            .where('city', '==', currentAddress.split(',')[0])
-            .orderBy('likes', 'desc')
-            .startAfter(lastDoc)
-            .limit(1);
+        .where('city', '==', currentAddress.split(',')[0])
+        .where('date','<', new Date())
+        .orderBy('date', 'desc')
 
-        const getData = await next.get();
+        const query = next.startAfter(lastDoc).limit(1)
+
+        const getData = await query.get();
         if (getData.empty) {
             console.log('NADAWADA');
             return;

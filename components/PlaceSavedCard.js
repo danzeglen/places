@@ -13,7 +13,7 @@ import firebase from 'firebase'
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { RectButton } from 'react-native-gesture-handler';
 
-const PlaceSavedCard = ({ postData, setPostData, item, onPress, style, onNavigate }) => {
+const PlaceSavedCard = ({ item, onPress, style, onNavigate }) => {
     const { user, userDetails, setUserDetails } = useContext(UserContext)
     const [rateVisable, setRateVisable] = useState(false)
     const [ratingSent, setRatingSent] = useState(false)
@@ -23,18 +23,14 @@ const PlaceSavedCard = ({ postData, setPostData, item, onPress, style, onNavigat
         favs = userDetails.favorites
     }
     const handleRemove = async (e) => {
-       
-        console.log(userDetails.favorites)
-        console.log(e)
-        console.log('^^^^e^^^^')
-            await setUserDetails({
-                favorites: userDetails.favorites.filter(function (item) {
-                    return item !== e
-                })
-            });
-            console.log(userDetails.favorites)
-            
-       await db.collection('users').doc(user.uid).update({
+        let tempArray = userDetails.favorites
+        const tempArray2 = tempArray.filter(function (item) {
+            return item !== e
+        })
+        
+        setUserDetails({...userDetails, ['favorites']: tempArray2})
+
+        await db.collection('users').doc(user.uid).update({
             favorites: firebase.firestore.FieldValue.arrayRemove(e)
         })
 

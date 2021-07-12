@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { TouchableOpacity, Text, Image, StyleSheet, View, Share } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -12,32 +12,35 @@ import { db } from '../fireconfig'
 import firebase from 'firebase'
 
 
-const PlaceCard = ({ item, onPress, style, onNavigate }) => {
+const PlaceCard = ({ index, item, onPress, style, onNavigate }) => {
     const { user, userDetails, setUserDetails } = useContext(UserContext)
     const [rateVisable, setRateVisable] = useState(false)
     const [ratingSent, setRatingSent] = useState(false)
+    const [isReviewed, setIsReviewed] = useState(false)
     let favs
+
     if (userDetails) {
         favs = userDetails.favorites
     }
     let displayImages
-    console.log(favs)
-    
+
     const handleSave = async () => {
+        let tempArray = userDetails.favorites
+        tempArray.push(item.docID)
         await db.collection('users').doc(user.uid).update({
             favorites: firebase.firestore.FieldValue.arrayUnion(item.docID)
         })
 
-        setUserDetails({favorites: [...favs, item.docID]})
+        setUserDetails({ ...userDetails, ['favorites']: tempArray })
+
+
     }
-    console.log(userDetails)
+
 
     const onShare = async () => {
         let title = item.title
         let uri = item.imgs[0]
 
-        console.log(uri)
-        console.log('^^^uri^^^^')
         try {
             const result = await Share.share({
                 message: title,
@@ -58,59 +61,59 @@ const PlaceCard = ({ item, onPress, style, onNavigate }) => {
     };
 
     const oneImage = (
-        <CachedImage
+        <Image
             style={{ height: 200, width: '100%', borderRadius: 20 }}
             source={{
                 uri: item.imgs[0],
             }}
-            cacheKey={item.docID} />
+        />
     )
 
     const twoImage = (
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <CachedImage
+            <Image
                 style={{ height: 200, width: '49.5%', borderTopLeftRadius: 20, borderBottomLeftRadius: 20 }}
                 source={{
                     uri: item.imgs[0],
 
                 }}
-                cacheKey={`${item.docID}1`} />
-            <CachedImage
+            />
+            <Image
                 style={{ height: 200, width: '49.5%', borderTopRightRadius: 20, borderBottomRightRadius: 20 }}
                 source={{
                     uri: item.imgs[1],
 
                 }}
-                cacheKey={`${item.docID}2`} />
+            />
         </View>
     )
 
     const threeImage = (
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
 
-            <CachedImage
+            <Image
                 style={{ height: 200, width: '49.5%', borderTopLeftRadius: 20, borderBottomLeftRadius: 20 }}
                 source={{
                     uri: item.imgs[0],
 
                 }}
-                cacheKey={`${item.docID}0`} />
+            />
 
             <View style={{ width: '49.5%', justifyContent: 'space-between' }}>
-                <CachedImage
+                <Image
                     style={{ height: 98, width: '100%', borderTopRightRadius: 20 }}
                     source={{
                         uri: item.imgs[1],
 
                     }}
-                    cacheKey={`${item.docID}1`} />
-                <CachedImage
+                />
+                <Image
                     style={{ height: 98, width: '100%', borderBottomRightRadius: 20 }}
                     source={{
                         uri: item.imgs[2],
 
                     }}
-                    cacheKey={`${item.docID}2`} />
+                />
             </View>
 
 
@@ -122,31 +125,47 @@ const PlaceCard = ({ item, onPress, style, onNavigate }) => {
     } else if (item.imgs.length == 2) {
         displayImages = twoImage
     } else {
-        console.log('THREE')
         displayImages = threeImage
     }
 
+    useEffect(() => {
+        try {
+            if (userDetails.placesrated.includes(item.docID)) {
+                console.log('in the true in the true in the true')
+                setIsReviewed(true)
+            } else {
+                setIsReviewed(false)
+            }
+
+        } catch (err) {
+            console.log(err)
+            setIsReviewed(false)
+        }
+
+    }, [userDetails, user])
+
+    let date = new Date(item.date.seconds * 1000).toString()
     return (
         <View style={[styles.item, style]}>
             <RateModal setRatingSent={setRatingSent} docID={item.docID} ratingnum={item.ratingnum} rating={item.rating} rateVisable={rateVisable} setRateVisable={setRateVisable} />
             <View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={styles.title}>THIS IS GOING TO BE A VERY VEYR VEYR VRY LONG TITLE HEHEHE</Text>
+                    <Text style={styles.title}>{item.title}</Text>
                     <TouchableOpacity onPress={onNavigate} >
                         <Ionicons name='arrow-forward' size={25} color='grey' />
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.name}>Daniel Zeglen</Text>
-                <Text style={styles.desc}>{item.description}</Text>
+                <Text style={styles.name}>Daniel Zeglen - {date} </Text>
                 {displayImages}
                 <DisplayTypes food={item.food} entertainment={item.entertainment} under15={item.under15} free={item.free} outdoors={item.outdoors} lake={item.lake} datespot={item.datesport} />
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 15 }}>
                     <View style={{ flexDirection: 'row', width: 100 }}>
 
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setRateVisable(true)}>
-                            <Text>{item.rating}</Text>
-
-                            <AntDesign name='staro' size={25} color='grey' />
+                            <Text>{Math.round(item.rating * 100) / 100}</Text>
+                            {isReviewed ?
+                                <AntDesign name='star' size={25} color='orange' />
+                                : <AntDesign name='staro' size={25} color='grey' />}
                         </TouchableOpacity>
                     </View>
 
@@ -188,7 +207,8 @@ const styles = StyleSheet.create({
     name: {
         paddingLeft: 5,
         color: 'grey',
-        minWidth: 50
+        minWidth: 50,
+        paddingBottom: 10,
     }
 });
 export default PlaceCard;

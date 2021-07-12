@@ -19,7 +19,6 @@ const CachedImage = props => {
       try {
         // Use the cached image if it exists
         const metadata = await FileSystem.getInfoAsync(fileURI)
-        console.log(metadata)
         if (!metadata.exists) {
           // download to cache
           if (componentIsMounted.current) {

@@ -1,45 +1,13 @@
-import React, { useState, useContext } from 'react';
-import { Button, ActivityIndicator, Alert, Modal, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import React, { useState } from 'react';
+import { Button, ActivityIndicator, Alert, Modal, StyleSheet, Text, TouchableHighlight, View, TouchableOpacity } from 'react-native';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import { db } from '../fireconfig'
-import { UserContext } from '../providers/fire'
-import firebase from 'firebase'
 
-const RateModal = ({ setRatingSent, docID, ratingnum, rating, rateVisable, setRateVisable }) => {
+const RateModalPost = ({setRating, setRatingSent, docID, ratingnum, rating, rateVisable, setRateVisable }) => {
     const [inputedRating, setInputedRating] = useState(3)
-    const { userDetails, user, setUserDetails } = useContext(UserContext)
-
-    const handleRating = () => {
-        let numerator = ratingnum * rating + inputedRating
-        let denominator
-        if (userDetails.placesrated.includes(docID)) {
-            console.log('already rated')
-            setRateVisable(false);
-            return
-        }
-        let tempArray = userDetails.placesrated
-        tempArray.push(docID)
-        setUserDetails({ ...userDetails, ['placesrated']: tempArray })
-        console.log('past if')
-        denominator = ratingnum + 1
 
 
-        let newRating = numerator / denominator
-        console.log(rating)
-        console.log(console.log(inputedRating))
-
-
-        db.collection('places').doc(docID).update({
-            ratingnum: denominator,
-            rating: newRating,
-        })
-        db.collection('users').doc(user.uid).update({
-            placesrated: firebase.firestore.FieldValue.arrayUnion(docID)
-        })
-
-        setRateVisable(false);
-    }
-
+    console.log(inputedRating)
     return (
         <View style={styles.centeredView}>
             <Modal
@@ -56,13 +24,16 @@ const RateModal = ({ setRatingSent, docID, ratingnum, rating, rateVisable, setRa
 
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingTop: 20 }}>
                             <Button title='Go back' onPress={setRateVisable}></Button>
-                            <Button title='Submit' onPress={handleRating}></Button>
+                            <Button title='Submit' onPress={() => { setRating(inputedRating); setRateVisable(false) }}></Button>
                         </View>
 
                     </View>
                 </View>
 
             </Modal>
+                <TouchableOpacity onPress={() => setRateVisable(true)}>
+                    <Text style={{color:'dodgerblue'}}>Rating: {inputedRating}</Text>
+                </TouchableOpacity>
 
         </View>
     );
@@ -109,4 +80,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default RateModal
+export default RateModalPost

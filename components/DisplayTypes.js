@@ -7,46 +7,44 @@ const DisplayTypes = ({ under15, datespot, entertainment, food, free, group, lak
     let displayArray = []
     if (food) {
         displayArray.push(
-            { type: 'food', icon: 'flower', color: 'blue' })
+            { type: 'food', icon: 'fast-food', color: 'orange' })
     } 
     if (free) {
         displayArray.push(
-            { type: 'free', icon: 'flower', color: 'blue' })
+            { type: 'free', icon: 'basketball', color: '#5d6ed9' })
     } 
     if (under15) {
         displayArray.push(
-            { type: 'under15', icon: 'flower', color: 'blue' })
+            { type: 'under15', icon: 'cash', color: '#529144' })
     }
     if (datespot) {
-        console.log('AT DATE')
         displayArray.push(
-            { type: 'datespot', icon: 'heart', color: '#ff3d40' })
+            { type: 'datespot', icon: 'heart', color: '#d95f67' })
     }
     if (group) {
         displayArray.push(
-            { type: 'group', icon: 'flower', color: 'blue' })
+            { type: 'group', icon: 'beer', color: '#9c63ff' })
     }
     if (outdoors) {
         displayArray.push(
-            { type: 'outdoors', icon: 'flower', color: 'blue' })
+            { type: 'outdoors', icon: 'bonfire', color: '#87663a' })
     }
     if (lake) {
-        console.log('AT LAKE')
         displayArray.push(
-            { type: 'lake', icon: 'water', color: '#7796d4' })
+            { type: 'lake', icon: 'water', color: '#314cf7' })
     }
     if (entertainment) {
         console.log('AT ent')
         displayArray.push(
-            { type: 'entertainment', icon: 'game-controller', color: '#ffbb3d' })
+            { type: 'entertainment', icon: 'game-controller', color: 'red' })
     }
     return (
-        <View style={{ flexDirection: 'row', paddingTop:5 }}>
+        <View style={{ flexDirection: 'row', paddingTop:5,flexWrap:'nowrap' }}>
             {displayArray.map((e) => {
                 return (
                     <View key={e.type} style={{ flexDirection: 'row', backgroundColor: e.color, paddingBottom:2,paddingTop:2,paddingLeft:5,paddingRight:10, borderRadius: 10,marginRight:5 }}>
                         <Ionicons name={e.icon} size={20} color={'white'} />
-                        <Text style={{ fontSize: 17, color:'white',paddingLeft:5 }}>{e.type}</Text>
+                        <Text style={{ fontSize: 15, color:'white',paddingLeft:5 }}>{e.type}</Text>
                     </View>
                 )
             })}

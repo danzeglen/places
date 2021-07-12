@@ -38,10 +38,11 @@ function TrendingScreen({ navigation }) {
 
     async function fetchData() {
         let data = []
-        console.log(userDetails.favorites)
+        console.log(userDetails)
+        console.log('^^^^^^THIS IS SAVED PLACES USER DETAILS^^^')
         const dataRef = db.collection('places')
             .where(firebase.firestore.FieldPath.documentId(), 'in', userDetails.favorites)
-            .limit(3);
+        const query = dataRef.limit(3);
         const snapshot = await dataRef.get()
 
         if (snapshot.empty) {
@@ -71,9 +72,9 @@ function TrendingScreen({ navigation }) {
         const next = db.collection('places')
             .where(firebase.firestore.FieldPath.documentId(), 'in', userDetails.favorites)
             .startAfter(lastDoc)
-            .limit(1);
+        const query = next.limit(1);
 
-        const getData = await next.get();
+        const getData = await query.get();
         if (getData.empty) {
             console.log('NADAWADA');
             return;
