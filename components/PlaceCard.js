@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { TouchableOpacity, Text, Image, StyleSheet, View, Share } from 'react-native'
+import { TouchableOpacity, Text, Image, StyleSheet, View, Share, Alert } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -17,7 +17,22 @@ const PlaceCard = ({ index, item, onPress, style, onNavigate }) => {
     const [rateVisable, setRateVisable] = useState(false)
     const [ratingSent, setRatingSent] = useState(false)
     const [isReviewed, setIsReviewed] = useState(false)
+    const [isSaved, setIsSaved] = useState(false)
     let favs
+
+    const createTwoButtonAlert = () =>
+        Alert.alert(
+            "You must be logged in",
+            "Go to the last tab to create an account or log in",
+            [
+                {
+                    text: "Ok",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "Ok"
+                }
+            ],
+            { cancelable: false }
+        );
 
     if (userDetails) {
         favs = userDetails.favorites
@@ -25,13 +40,19 @@ const PlaceCard = ({ index, item, onPress, style, onNavigate }) => {
     let displayImages
 
     const handleSave = async () => {
-        let tempArray = userDetails.favorites
-        tempArray.push(item.docID)
-        await db.collection('users').doc(user.uid).update({
-            favorites: firebase.firestore.FieldValue.arrayUnion(item.docID)
-        })
+        if (user) {
+            let tempArray = userDetails.favorites
+            tempArray.push(item.docID)
+            await db.collection('users').doc(user.uid).update({
+                favorites: firebase.firestore.FieldValue.arrayUnion(item.docID)
+            })
 
-        setUserDetails({ ...userDetails, ['favorites']: tempArray })
+            setUserDetails({ ...userDetails, ['favorites']: tempArray })
+
+        } else {
+            createTwoButtonAlert()
+
+        }
 
 
     }
@@ -131,20 +152,28 @@ const PlaceCard = ({ index, item, onPress, style, onNavigate }) => {
     useEffect(() => {
         try {
             if (userDetails.placesrated.includes(item.docID)) {
-                console.log('in the true in the true in the true')
                 setIsReviewed(true)
             } else {
                 setIsReviewed(false)
             }
 
         } catch (err) {
-            console.log(err)
             setIsReviewed(false)
+        }
+        try {
+            if (userDetails.favorites.includes(item.docID)) {
+                setIsSaved(true)
+            } else {
+                setIsSaved(false)
+            }
+
+        } catch (err) {
+            setIsSaved(false)
         }
 
     }, [userDetails, user])
 
-    let date = new Date(item.date.seconds * 1000).toString()
+    let date = new Date(item.date.seconds * 1000).toDateString()
     return (
         <View style={[styles.item, style]}>
             <RateModal setRatingSent={setRatingSent} docID={item.docID} ratingnum={item.ratingnum} rating={item.rating} rateVisable={rateVisable} setRateVisable={setRateVisable} />
@@ -163,6 +192,7 @@ const PlaceCard = ({ index, item, onPress, style, onNavigate }) => {
 
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setRateVisable(true)}>
                             <Text>{Math.round(item.rating * 100) / 100}</Text>
+                            <Text style={{color:'grey'}}> ({item.ratingnum})</Text>
                             {isReviewed ?
                                 <AntDesign name='star' size={25} color='orange' />
                                 : <AntDesign name='staro' size={25} color='grey' />}
@@ -177,7 +207,10 @@ const PlaceCard = ({ index, item, onPress, style, onNavigate }) => {
                     </View>
                     <View style={{ flexDirection: 'row', width: 100, justifyContent: 'flex-end' }}>
                         <TouchableOpacity onPress={handleSave}>
-                            <AntDesign name='pushpino' size={25} color='grey' style={{ paddingRight: 10 }} />
+                            {isSaved ?
+                                <AntDesign name='pushpin' size={25} color='red' style={{ paddingRight: 10 }} />
+                                : <AntDesign name='pushpino' size={25} color='grey' style={{ paddingRight: 10 }} />
+                            }
                         </TouchableOpacity>
                         <TouchableOpacity onPress={onShare}>
                             <AntDesign name='upload' size={25} color='grey' />

@@ -8,28 +8,29 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import wooly from './wooly.png'
 import wooly2 from './wooly2.png'
+import DefaultCityModal from '../components/DefaultCityModal';
 
 const ContentScreen = ({ navigation }) => {
     const { user, logout } = useContext(UserContext)
     const [loginModalVisable, setLoginModalVisable] = useState(false);
     const [createModalVisable, setCreateModalVisable] = useState(false);
-    console.log(user)
+    const [currentAddress, setCurrentAddress] = useState(null);
 
     if (user) {
         return (
             <View style={{ flex: 1, justifyContent: 'space-around', alignItems: "center" }}>
 
-                <SafeAreaView style={{flex:1}}>
+                <SafeAreaView style={{ flex: 1 }}>
                     <Text style={{ fontWeight: 'bold', fontSize: 25 }}>Hello, {user.displayName}</Text>
                     <View style={{ height: 300, width: 300, justifyContent: 'center', alignItems: 'center' }}>
                         <Image source={wooly} style={{ height: 300, width: 300 }} />
                     </View>
                 </SafeAreaView>
-                <View style={{ paddingTop: 15, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius:20,borderTopRightRadius:20 }}>
+                <View style={{ paddingTop: 15, width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
                     <Text>default city</Text>
-                    <Text style={{fontSize:20,paddingBottom:20,color:'dodgerblue'}}>Cambridge, ON, CA</Text>
+                    <DefaultCityModal setCurrentAddress={setCurrentAddress}/>
                     <TouchableOpacity onPress={() => navigation.navigate('Details')}>
-                        <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9',borderTopRightRadius:10,borderTopLeftRadius:10 }}>
+                        <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9', borderTopRightRadius: 10, borderTopLeftRadius: 10 }}>
                             <View style={{ marginLeft: 10, padding: 2, borderWidth: 0.7, borderColor: '#c9c9c9' }}>
                                 <AntDesign name='mobile1' size={28} />
                             </View>
@@ -45,7 +46,7 @@ const ContentScreen = ({ navigation }) => {
                     <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
                         <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9' }}>
                             <View style={{ marginLeft: 10, padding: 2, borderWidth: 0.7, borderColor: '#c9c9c9' }}>
-                            <Entypo name='bell' size={28} />
+                                <Entypo name='bell' size={28} />
                             </View>
                             <View style={{ flex: 1, paddingLeft: 10 }}>
                                 <Text style={{ fontWeight: 'bold' }}>Notifications</Text>
@@ -58,7 +59,7 @@ const ContentScreen = ({ navigation }) => {
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => navigation.navigate('Contact')}>
-                        <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9',borderBottomLeftRadius:10,borderBottomRightRadius:10  }}>
+                        <View style={{ width: '85%', height: 60, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderWidth: 0.7, borderColor: '#c9c9c9', borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
                             <View style={{ marginLeft: 10, padding: 2, borderWidth: 0.7, borderColor: '#c9c9c9' }}>
                                 <AntDesign name='mail' size={28} />
                             </View>
@@ -71,7 +72,7 @@ const ContentScreen = ({ navigation }) => {
                             </View>
                         </View>
                     </TouchableOpacity>
-                    <View style={{paddingTop:10,paddingBottom:50, width: '100%', justifyContent: 'center', alignItems: 'center', }}>
+                    <View style={{ paddingTop: 10, paddingBottom: 50, width: '100%', justifyContent: 'center', alignItems: 'center', }}>
                         <TouchableOpacity onPress={logout} style={{ width: '85%', height: 50, borderRadius: 10, backgroundColor: 'white' }}>
                             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, backgroundColor: '#0244ad', borderRadius: 10 }}>
                                 <Text style={{ color: 'white', fontSize: 20 }}>Logout</Text>

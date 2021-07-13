@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Button, ActivityIndicator, Alert, Modal, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 
 const LoadingModal = ({ modalVisible, setModalVisible, isloading, navigation }) => {
-    console.log(isloading)
-    console.log('^^^^')
+
     return (
         <View style={styles.centeredView}>
             <Modal

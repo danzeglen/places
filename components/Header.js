@@ -9,10 +9,11 @@ const Header = (props) => {
         'OtomanopeeOne': require('../assets/fonts/Otomanpee.ttf')
       });
 
-    const { currentAddress, setCurrentAddress } = useContext(UserContext)
-    console.log(currentAddress)
-    useEffect(() => {
 
+    const { currentAddress, setCurrentAddress } = useContext(UserContext)
+
+    useEffect(() => {
+        
     }, [])
 
 

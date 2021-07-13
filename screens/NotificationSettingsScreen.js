@@ -4,7 +4,7 @@ import { View, Text,StyleSheet } from 'react-native';
 const NotificationSettingsScreen = (props) => {
     return (
         <View style={styles.main}>
-            <Text>yo</Text>  
+            <Text>Notifications are still in development</Text>  
         </View>
     );
 }

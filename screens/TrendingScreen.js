@@ -22,7 +22,6 @@ function TrendingScreen({ navigation }) {
     };
 
     const _onRefresh = async () => {
-        console.log('_onRefresh')
         setRefreshing(true);
         await setData()
         setRefreshing(false);
@@ -61,7 +60,6 @@ function TrendingScreen({ navigation }) {
     async function handlePaginate() {
         let data = [];
         const last = postData[postData.length - 1];
-        console.log(lastDoc.id)
         const next = db.collection('places')
         .where('city', '==', currentAddress.split(',')[0])
         .where('date', '>', lastweek)
@@ -75,7 +73,6 @@ function TrendingScreen({ navigation }) {
             return;
         }
         getData.forEach(doc => {
-            console.log('RANRANRAN')
             setLastDoc(doc)
             let tempDoc = doc.data()
             tempDoc['docID'] = doc.id

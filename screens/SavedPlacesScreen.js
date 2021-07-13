@@ -30,7 +30,6 @@ function TrendingScreen({ navigation }) {
 
 
     const _onRefresh = async () => {
-        console.log('_onRefresh')
         setRefreshing(true);
         await setData()
         setRefreshing(false);
@@ -38,15 +37,12 @@ function TrendingScreen({ navigation }) {
 
     async function fetchData() {
         let data = []
-        console.log(userDetails)
-        console.log('^^^^^^THIS IS SAVED PLACES USER DETAILS^^^')
         const dataRef = db.collection('places')
             .where(firebase.firestore.FieldPath.documentId(), 'in', userDetails.favorites)
         const query = dataRef.limit(3);
         const snapshot = await dataRef.get()
 
         if (snapshot.empty) {
-            console.log('NADA');
             return;
         }
         snapshot.forEach(doc => {
@@ -76,7 +72,6 @@ function TrendingScreen({ navigation }) {
 
         const getData = await query.get();
         if (getData.empty) {
-            console.log('NADAWADA');
             return;
         }
         getData.forEach(doc => {
@@ -88,14 +83,10 @@ function TrendingScreen({ navigation }) {
 
         return data
     }
-    if (postData) {
-        console.log(postData.length)
-    }
 
 
 
     const handlePadinateState = async () => {
-        console.log('ran')
         const data = await handlePaginate()
 
         if (data) {

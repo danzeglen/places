@@ -13,7 +13,6 @@ const TypeModal = ({ setType, type }) => {
         let displayArray = []
         for (const [key, value] of Object.entries(type)) {
             if (value === true) {
-                console.log(`${key}: ${value}`);
                 if (key === 'food') {
                     displayArray.push(
                         <View key={key} style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: 'orange', padding: 5, margin: 5, borderRadius: 10, flexDirection: 'row' }}>
@@ -90,89 +89,65 @@ const TypeModal = ({ setType, type }) => {
     }
 
     const handleClickFree = () => {
-        console.log('^^')
         if (trueCount === 3) {
-            console.log('in here')
             setType({ ...type, free: false })
         } else {
-            console.log('in else')
             setType({ ...type, free: !type.free })
         }
     }
     const handleClickFood = () => {
         let trueCount = Object.values(type).reduce((a, type) => a + type, 0)
-        console.log('^^')
         if (trueCount === 3) {
-            console.log('in here')
             setType({ ...type, food: false })
         } else {
-            console.log('in else')
             setType({ ...type, food: !type.food })
         }
     }
     const handleClickUnder15 = () => {
         let trueCount = Object.values(type).reduce((a, type) => a + type, 0)
-        console.log('^^')
         if (trueCount === 3) {
-            console.log('in here')
             setType({ ...type, under15: false })
         } else {
-            console.log('in else')
             setType({ ...type, under15: !type.under15 })
         }
     }
     const handleClickDatespots = () => {
         let trueCount = Object.values(type).reduce((a, type) => a + type, 0)
-        console.log('^^')
         if (trueCount === 3) {
-            console.log('in here')
             setType({ ...type, datespot: false })
         } else {
-            console.log('in else')
             setType({ ...type, datespot: !type.datespot })
         }
     }
     const handleClickGroup = () => {
         let trueCount = Object.values(type).reduce((a, type) => a + type, 0)
-        console.log('^^')
         if (trueCount === 3) {
-            console.log('in here')
             setType({ ...type, group: false })
         } else {
-            console.log('in else')
             setType({ ...type, group: !type.group })
         }
     }
     const handleClickOutdoors = () => {
         let trueCount = Object.values(type).reduce((a, type) => a + type, 0)
-        console.log('^^')
         if (trueCount === 3) {
-            console.log('in here')
             setType({ ...type, outdoors: false })
         } else {
-            console.log('in else')
             setType({ ...type, outdoors: !type.outdoors })
         }
     }
     const handleClickLake = () => {
         let trueCount = Object.values(type).reduce((a, type) => a + type, 0)
-        console.log('^^')
         if (trueCount === 3) {
-            console.log('in here')
             setType({ ...type, lake: false })
         } else {
-            console.log('in else')
             setType({ ...type, lake: !type.lake })
         }
     }
     const handleClickEntertainment = () => {
         let trueCount = Object.values(type).reduce((a, type) => a + type, 0)
-        console.log('^^')
         if (trueCount === 3) {
-            console.log('in here')
             setType({ ...type, entertainment: false })
         } else {
-            console.log('in else')
             setType({ ...type, entertainment: !type.entertainment })
         }
     }

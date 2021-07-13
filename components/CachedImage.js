@@ -33,7 +33,6 @@ const CachedImage = props => {
           }
         }
       } catch (err) {
-        console.log() // eslint-disable-line no-console
         setImgURI(uri)
       }
     }

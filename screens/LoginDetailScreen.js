@@ -5,21 +5,17 @@ const LoginDetailScreen = (props) => {
     return (
         <View style={styles.main}>
             <View style={{marginTop:10, paddingLeft:10}}>
-                <Text>Email:</Text>
+                <Text style={{paddingBottom:5}}>Email:</Text>
                 <View style={styles.setting}>
                     <Text style={{flex:1,paddingLeft:10}}>Danielman99@msn.com</Text>
-                    <TouchableOpacity style={{paddingRight:10}}>
-                        <Text>Edit</Text>
-                    </TouchableOpacity>
+                    
                 </View>
             </View>
             <View style={{marginTop:10,paddingLeft:10}}>
-                <Text>Display Name:</Text>
+                <Text style={{paddingBottom:5}}>Display Name:</Text>
                 <View style={styles.setting}>
                     <Text style={{flex:1,paddingLeft:10}}>Daniel Zeglen</Text>
-                    <TouchableOpacity style={{paddingRight:10}}>
-                        <Text>Edit</Text>
-                    </TouchableOpacity>
+                    
                 </View>
             </View>
         </View>

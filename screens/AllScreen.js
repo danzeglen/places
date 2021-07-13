@@ -21,7 +21,6 @@ function AllScreen({navigation}) {
     };
 
     const _onRefresh = async () => {
-        console.log('_onRefresh')
         setRefreshing(true);
         await setData()
         setRefreshing(false);
@@ -38,7 +37,6 @@ function AllScreen({navigation}) {
         const snapshot = await query.get()
 
         if (snapshot.empty) {
-            console.log('NADA');
             return;
         }
         snapshot.forEach(doc => {
@@ -67,7 +65,6 @@ function AllScreen({navigation}) {
 
         const getData = await query.get();
         if (getData.empty) {
-            console.log('NADAWADA');
             return;
         }
         getData.forEach(doc => {
@@ -79,13 +76,10 @@ function AllScreen({navigation}) {
 
         return data
     }
-    if(postData){
-        console.log(postData.length)
-    }
+   
 
 
     const handlePadinateState = async () => {
-        console.log('ran')
         const data = await handlePaginate()
 
         if (data) {

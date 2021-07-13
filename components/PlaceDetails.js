@@ -8,6 +8,8 @@ import DisplayTypes from './DisplayTypes';
 import CommentModal from './CommentModal';
 import RateModal from './RateModal';
 import { UserContext } from '../providers/fire'
+import { db } from '../fireconfig'
+import firebase from 'firebase'
 
 
 const PlaceDetails = ({ item }) => {
@@ -16,17 +18,36 @@ const PlaceDetails = ({ item }) => {
     const [rateVisable, setRateVisable] = useState(false)
     const [ratingSent, setRatingSent] = useState(false)
     const [isReviewed, setIsReviewed] = useState(false)
+    const [isSaved, setIsSaved] = useState(false)
+
     let carRef = useRef(null);
+    let favs;
+    if (userDetails) {
+        favs = userDetails.favorites
+    }
 
     useEffect(() => {
-        if (userDetails) {
+        try {
             if (userDetails.placesrated.includes(item.docID)) {
                 setIsReviewed(true)
             } else {
                 setIsReviewed(false)
             }
+
+        } catch (err) {
+            setIsReviewed(false)
         }
-    }, [userDetails])
+        try {
+            if (userDetails.favorites.includes(item.docID)) {
+                setIsSaved(true)
+            } else {
+                setIsSaved(false)
+            }
+
+        } catch (err) {
+            setIsSaved(false)
+        }
+    }, [userDetails, user])
 
 
 
@@ -44,11 +65,21 @@ const PlaceDetails = ({ item }) => {
         );
     }
     const handleSave = async () => {
-        await db.collection('users').doc(user.uid).update({
-            favorites: firebase.firestore.FieldValue.arrayUnion(item.docID)
-        })
+        if (user) {
+            let tempArray = userDetails.favorites
+            tempArray.push(item.docID)
+            await db.collection('users').doc(user.uid).update({
+                favorites: firebase.firestore.FieldValue.arrayUnion(item.docID)
+            })
 
-        setUserDetails({ favorites: [...favs, item.docID] })
+            setUserDetails({ ...userDetails, ['favorites']: tempArray })
+
+        } else {
+            createTwoButtonAlert()
+
+        }
+
+
     }
 
     return (
@@ -91,9 +122,11 @@ const PlaceDetails = ({ item }) => {
                     <Text style={{ color: 'grey', paddingLeft: 10 }}>{item.commentnum} comment(s)</Text>
                 </View>
                 <View style={{ flexDirection: 'row', width: 100, justifyContent: 'flex-end' }}>
-                    <TouchableOpacity>
-
-                        <AntDesign name='pushpino' size={25} color='grey' style={{ paddingRight: 10 }} />
+                    <TouchableOpacity onPress={handleSave}>
+                        {isSaved ?
+                            <AntDesign name='pushpin' size={25} color='red' style={{ paddingRight: 10 }} />
+                            : <AntDesign name='pushpino' size={25} color='grey' style={{ paddingRight: 10 }} />
+                        }
                     </TouchableOpacity>
 
                     <TouchableOpacity>

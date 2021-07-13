@@ -54,6 +54,7 @@ const FireProvider = ({ children }) => {
         let details = await db.collection('users').doc(usercred.uid).get()
 
         if(!details.empty){
+            setCurrentAddress(details.data().defaultcity)
             setUserDetails(details.data())
         }
     }

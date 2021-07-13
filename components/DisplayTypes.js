@@ -34,7 +34,6 @@ const DisplayTypes = ({ under15, datespot, entertainment, food, free, group, lak
             { type: 'lake', icon: 'water', color: '#314cf7' })
     }
     if (entertainment) {
-        console.log('AT ent')
         displayArray.push(
             { type: 'entertainment', icon: 'game-controller', color: 'red' })
     }

@@ -1,22 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, Alert } from 'react-native'
 import { db } from '../fireconfig'
 import PlaceDetails from '../components/PlaceDetails';
 import CommentModal from '../components/CommentModal';
-import {UserContext} from '../providers/fire'
+import { UserContext } from '../providers/fire'
+
 function PostDetails({ route, navigation }) {
   const [commentData, setCommentData] = useState();
   const [modalVisable, setModalVisable] = useState(false);
   const [comment, setComment] = useState('');
   const { item } = route.params;
 
+  const createTwoButtonAlert = () =>
+        Alert.alert(
+            "You must be logged in",
+            "Go to the last tab to create an account or log in",
+            [
+                {
+                    text: "Ok",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "Ok"
+                }
+            ],
+            { cancelable: false }
+        );
+
   async function fetchData() {
     let data = []
     const dataRef = db.collection('places').doc(item.docID).collection('comments')
     const snapshot = await dataRef.get()
+    
 
     if (snapshot.empty) {
-      console.log('NADA');
       return;
     }
     snapshot.forEach(doc => {
@@ -37,20 +52,22 @@ function PostDetails({ route, navigation }) {
     setData()
   }, [])
 
-  console.log(commentData)
 
   const handleCommentPost = () => {
-    console.log('ran')
-    db.collection('places').doc(item.docID).collection('comments').add({
-      content: comment,
-      user: 'Daniel Bobwishyman'
-    })
+    if (user) {
+      db.collection('places').doc(item.docID).collection('comments').add({
+        content: comment,
+        user: user.displayName
+      })
 
-    db.collection('places').doc(item.docID).update({
-      commentnum: item.commentnum + 1
-    })
+      db.collection('places').doc(item.docID).update({
+        commentnum: item.commentnum + 1
+      })
 
-    setModalVisable(false);
+      setModalVisable(false);
+    } else {
+      createTwoButtonAlert()
+    }
   }
 
   return (

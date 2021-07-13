@@ -53,7 +53,6 @@ const PostScreen = ({ navigation }) => {
         let downloadURLS = [];
 
         await Promise.all(image.map(async (img, index) => {
-            console.log(img)
             const blob = await new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
                 xhr.onload = function () {
@@ -78,8 +77,6 @@ const PostScreen = ({ navigation }) => {
         }))
         if (inputedAddress) {
 
-            console.log('INSIDE THE FUCKING CUSTOM INPUT')
-            console.log(inputedAddress)
             await db.collection('places').add({
                 useruid: user.uid,
                 displayName: user.displayName,
@@ -110,14 +107,11 @@ const PostScreen = ({ navigation }) => {
             let formattedAddr
 
             try {
-                console.log('in try')
                 formattedAddr = address[0].name
             } catch (error) {
-                console.log(error)
                 formattedAddr = address[0].street
             }
 
-            console.log(formattedAddr)
 
             await db.collection('places').add({
                 useruid: user.uid,
@@ -146,7 +140,6 @@ const PostScreen = ({ navigation }) => {
 
             })
         }
-        console.log('DONE')
         setModalVisible(false)
         cancel()
         setSuccessVisible(true)
@@ -164,17 +157,13 @@ const PostScreen = ({ navigation }) => {
 
     const getLocation = async () => {
         setCurrentPress(true);
-        console.log('ran')
         let { status } = await Location.requestForegroundPermissionsAsync();
-        console.log(status)
         if (status !== 'granted') {
             setErrorMsg('Permission to access location was denied');
             return;
         }
         let location = await Location.getCurrentPositionAsync({});
         const address = await Location.reverseGeocodeAsync(location.coords);
-        console.log(address[0].name)
-        console.log(address)
         setAddress(address)
         setLocation(location.coords);
     }

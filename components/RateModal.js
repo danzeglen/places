@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Button, ActivityIndicator, Alert, Modal, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { Button, ActivityIndicator, Modal, StyleSheet, Text, TouchableHighlight, View, Alert } from 'react-native';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import { db } from '../fireconfig'
 import { UserContext } from '../providers/fire'
@@ -9,35 +9,48 @@ const RateModal = ({ setRatingSent, docID, ratingnum, rating, rateVisable, setRa
     const [inputedRating, setInputedRating] = useState(3)
     const { userDetails, user, setUserDetails } = useContext(UserContext)
 
-    const handleRating = () => {
-        let numerator = ratingnum * rating + inputedRating
-        let denominator
-        if (userDetails.placesrated.includes(docID)) {
-            console.log('already rated')
-            setRateVisable(false);
-            return
+    const createTwoButtonAlert = () =>
+    Alert.alert(
+      "You must be logged in",
+      "Go to the last tab to create an account or log in",
+      [
+        {
+          text: "Ok",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "Ok"
         }
-        let tempArray = userDetails.placesrated
-        tempArray.push(docID)
-        setUserDetails({ ...userDetails, ['placesrated']: tempArray })
-        console.log('past if')
-        denominator = ratingnum + 1
+      ],
+      { cancelable: false }
+    );
+
+    const handleRating = () => {
+        if (user) {
+            let numerator = ratingnum * rating + inputedRating
+            let denominator
+            if (userDetails.placesrated.includes(docID)) {
+                setRateVisable(false);
+                return
+            }
+            let tempArray = userDetails.placesrated
+            tempArray.push(docID)
+            setUserDetails({ ...userDetails, ['placesrated']: tempArray })
+            denominator = ratingnum + 1
 
 
-        let newRating = numerator / denominator
-        console.log(rating)
-        console.log(console.log(inputedRating))
+            let newRating = numerator / denominator
 
+            db.collection('places').doc(docID).update({
+                ratingnum: denominator,
+                rating: newRating,
+            })
+            db.collection('users').doc(user.uid).update({
+                placesrated: firebase.firestore.FieldValue.arrayUnion(docID)
+            })
 
-        db.collection('places').doc(docID).update({
-            ratingnum: denominator,
-            rating: newRating,
-        })
-        db.collection('users').doc(user.uid).update({
-            placesrated: firebase.firestore.FieldValue.arrayUnion(docID)
-        })
-
-        setRateVisable(false);
+            setRateVisable(false);
+        } else {
+            createTwoButtonAlert()
+        }
     }
 
     return (

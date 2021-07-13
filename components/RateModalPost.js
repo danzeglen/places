@@ -7,7 +7,6 @@ const RateModalPost = ({setRating, setRatingSent, docID, ratingnum, rating, rate
     const [inputedRating, setInputedRating] = useState(3)
 
 
-    console.log(inputedRating)
     return (
         <View style={styles.centeredView}>
             <Modal
